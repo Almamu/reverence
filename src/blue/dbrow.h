@@ -74,6 +74,8 @@ typedef struct {
 	PyObject *rd_initarg;				// tuple of columns/types
 	PyObject *rd_header;				// List with header.
 
+	PyObject *rd_header2;				// List with header.
+
 	PyObject *rd_properties;			// List with properties or NULL
 	int rd_prop_size;					// number of properties
 

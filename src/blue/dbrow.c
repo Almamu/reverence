@@ -573,9 +573,31 @@ rd_Keys(PyDBRowDescriptorObject *self)
 	return self->rd_header;
 }
 
+static PyObject *
+rd_Types(PyDBRowDescriptorObject *self)
+{
+	if(!self->rd_header2)
+	{
+		int i;
+		PyObject *column;
+
+		if(!(self->rd_header2 = PyList_New(self->ob_size)) )
+			return NULL;
+
+		for(i=0; i < self->ob_size; i++)
+			PyList_SET_ITEM(self->rd_header2, i, PyInt_FromLong(self->rd_cd[i].cd_type));
+
+	}
+
+	Py_INCREF(self->rd_header2);
+
+	return self->rd_header2;
+}
+
 
 static struct PyMethodDef rd_methods[] = {
 	{"Keys", (PyCFunction)rd_Keys, METH_NOARGS, NULL},
+	{"Types", (PyCFunction)rd_Types, METH_NOARGS, NULL},
 	{"__reduce_ex__", (PyCFunction)rd_reduce_ex, METH_O, NULL},
 	{"__setstate__", (PyCFunction)rd_setstate, METH_O, NULL},
 	{NULL,	 NULL}		/* sentinel */
