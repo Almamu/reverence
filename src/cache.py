@@ -28,10 +28,11 @@ _exists = os.path.exists
 
 def GetCacheFileName(key, machoVersion=99999):
 	"""Returns filename for specified object name."""
+	print("cache.GetCacheFileName(\""+str(key)+"\")")
 
 	if machoVersion >= 213:
 		return "%x.cache" % binascii.crc_hqx(cPickle.dumps(key), 0)
-# Legacy stuff. Deprecated. Here for historical reasons :)
+	# Legacy stuff. Deprecated. Here for historical reasons :)
 	#elif machoVersion >= 151:
 	#	return "%x.cache" % binascii.crc_hqx((blue.marshal.Save(key, machoVersion=machoVersion)), 0)
 	#elif machoVersion >= 136:
@@ -277,6 +278,7 @@ class CacheMgr:
 
 	def _loadobject(self, key, canraise=False, folder=None):
 		name = _join(self.machocachepath, folder, self.GetCacheFileName(key))
+		print("cache._loadobject: filename is "+self.GetCacheFileName(key) )
 		if not canraise:
 			if not _exists(name):
 				return None
@@ -290,6 +292,18 @@ class CacheMgr:
 
 		return obj
 
+	def _loadobjectfile(self, file, canraise=False, folder=None):
+		name = _join(self.machocachepath, folder, file)
+		if not canraise:
+			if not _exists(name):
+				return None
+
+		obj = blue.marshal.Load(_readfile(name))
+		return obj
+
+	def LoadCachedMethodCallFile(self, file):
+		"""Loads a named object from EVE's CachedMethodCalls folder."""
+		return self._loadobjectfile(file, True, "CachedMethodCalls")
 
 	def LoadCachedMethodCall(self, key):
 		"""Loads a named object from EVE's CachedMethodCalls folder."""
